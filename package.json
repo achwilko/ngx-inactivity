@@ -1,6 +1,6 @@
 {
   "name": "ngx-inactivity",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Angular (4.x+) directive to handle user inactivity",
   "main": "./src/app/ngx-inactivity",
   "scripts": {
