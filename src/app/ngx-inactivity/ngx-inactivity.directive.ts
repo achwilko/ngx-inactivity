@@ -1,7 +1,7 @@
 import { Directive, Input, Output, EventEmitter, HostListener } from '@angular/core';
 
 import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/debounce';
+import 'rxjs/add/operator/throttle';
 import 'rxjs/add/operator/merge';
 import { Observable } from 'rxjs/Observable';
 
@@ -84,7 +84,7 @@ export class NgxInactivityDirective {
        * Debounce to emits a value from the source Observable
        * only after a particular time span
        */
-      .debounce(() => Observable.interval(this.ngxInactivityInterval))
+      .throttle(() => Observable.interval(this.ngxInactivityInterval))
 
       /*
        * Subscribe to handle emitted values
@@ -103,7 +103,7 @@ export class NgxInactivityDirective {
     /**
      * Inactivity callback if timeout (in minutes) is exceeded
      */
-    this.timeoutId = setTimeout(() =>  this.ngxInactivityCallback.emit(true), this.ngxInactivity * 60000);
+    this.timeoutId = setTimeout(() => this.ngxInactivityCallback.emit(true), this.ngxInactivity * 60000);
   }
 
   /**
