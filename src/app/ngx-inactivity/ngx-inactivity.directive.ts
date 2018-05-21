@@ -52,7 +52,7 @@ export class NgxInactivityDirective {
    * Attach a mouse move listener
    */
   @HostListener('document:mousemove', ['$event'])
-  onMousemove(event) {
+  onMousemove(event: any) {
     this.mousemove.emit(event);
   }
 
@@ -60,7 +60,7 @@ export class NgxInactivityDirective {
    * Atach a mouse down listener
    */
   @HostListener('document:mousedown', ['$event'])
-  onMousedown(event) {
+  onMousedown(event: any) {
     this.mousedown.emit(event);
   }
 
@@ -68,7 +68,7 @@ export class NgxInactivityDirective {
    * Attach a key press listener
    */
   @HostListener('document:keypress', ['$event'])
-  onKeypress(event) {
+  onKeypress(event: any) {
     this.keypress.emit(event);
   }
 
