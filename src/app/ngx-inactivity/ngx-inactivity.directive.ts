@@ -1,7 +1,7 @@
 import { Directive, Input, Output, EventEmitter, HostListener } from '@angular/core';
 
 import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/throttle';
+import 'rxjs/add/operator/debounce';
 import 'rxjs/add/operator/merge';
 import { Observable } from 'rxjs/Observable';
 
@@ -17,6 +17,11 @@ export class NgxInactivityDirective {
    * Mouse move event emitter
    */
   private mousemove = new EventEmitter();
+
+  /**
+   * Wheel move event emitter
+   */
+  private wheelmove = new EventEmitter();
 
   /**
    * Mouse down event emitter
@@ -49,18 +54,33 @@ export class NgxInactivityDirective {
   @Output() ngxInactivityCallback = new EventEmitter();
 
   /**
+   * Inactivity reset callback after timeout
+   */
+  @Output() ngxInactivityResetCallback = new EventEmitter();
+
+  /**
    * Attach a mouse move listener
    */
+  @HostListener('document:wheel', ['$event'])
+  onWheelmove(event) {
+    this.wheelmove.emit(event);
+  }
+
+  /**
+   * Attach a mouse move (and touch move) listener(s)
+   */
   @HostListener('document:mousemove', ['$event'])
-  onMousemove(event: any) {
+  @HostListener('document:touchmove', ['$event'])
+  onMousemove(event) {
     this.mousemove.emit(event);
   }
 
   /**
-   * Atach a mouse down listener
+   * Atach a mouse down (and touch end) listener(s)
    */
   @HostListener('document:mousedown', ['$event'])
-  onMousedown(event: any) {
+  @HostListener('document:touchend', ['$event'])
+  onMousedown(event) {
     this.mousedown.emit(event);
   }
 
@@ -68,7 +88,7 @@ export class NgxInactivityDirective {
    * Attach a key press listener
    */
   @HostListener('document:keypress', ['$event'])
-  onKeypress(event: any) {
+  onKeypress(event) {
     this.keypress.emit(event);
   }
 
@@ -78,13 +98,13 @@ export class NgxInactivityDirective {
      * by blending their values into one Observable
      */
     this.mousemove
-      .merge(this.mousedown, this.keypress)
+      .merge(this.wheelmove, this.mousedown, this.keypress)
 
       /*
        * Debounce to emits a value from the source Observable
        * only after a particular time span
        */
-      .throttle(() => Observable.interval(this.ngxInactivityInterval))
+      .debounce(() => Observable.interval(this.ngxInactivityInterval))
 
       /*
        * Subscribe to handle emitted values
@@ -103,7 +123,7 @@ export class NgxInactivityDirective {
     /**
      * Inactivity callback if timeout (in minutes) is exceeded
      */
-    this.timeoutId = setTimeout(() => this.ngxInactivityCallback.emit(true), this.ngxInactivity * 60000);
+    this.timeoutId = setTimeout(() =>  this.ngxInactivityCallback.emit(true), this.ngxInactivity * 60000);
   }
 
   /**
@@ -111,6 +131,7 @@ export class NgxInactivityDirective {
    */
   public reset(): void {
     clearTimeout(this.timeoutId);
+    this.ngxInactivityResetCallback.emit(true);
   }
 
 }
