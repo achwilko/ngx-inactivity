@@ -118,7 +118,7 @@ export class NgxInactivityDirective {
     /**
      * Inactivity callback if timeout (in minutes) is exceeded
      */
-    this.timeoutId = setTimeout(() =>  this.ngxInactivityCallback.emit(true), this.ngxInactivity * 60000);
+    this.timeoutId = setTimeout(() => this.ngxInactivityCallback.emit(true), this.ngxInactivity * 60000);
   }
 
   /**
