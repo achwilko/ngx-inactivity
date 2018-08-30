@@ -19,6 +19,11 @@ export class NgxInactivityDirective {
   private mousemove = new EventEmitter();
 
   /**
+   * Wheel move event emitter
+   */
+  private wheelmove = new EventEmitter();
+
+  /**
    * Mouse down event emitter
    */
   private mousedown = new EventEmitter();
@@ -51,16 +56,26 @@ export class NgxInactivityDirective {
   /**
    * Attach a mouse move listener
    */
+  @HostListener('document:wheel', ['$event'])
+  onWheelmove(event) {
+    this.wheelmove.emit(event);
+  }
+
+  /**
+   * Attach a mouse move (and touch move) listener(s)
+   */
   @HostListener('document:mousemove', ['$event'])
-  onMousemove(event: any) {
+  @HostListener('document:touchmove', ['$event'])
+  onMousemove(event) {
     this.mousemove.emit(event);
   }
 
   /**
-   * Atach a mouse down listener
+   * Atach a mouse down (and touch end) listener(s)
    */
   @HostListener('document:mousedown', ['$event'])
-  onMousedown(event: any) {
+  @HostListener('document:touchend', ['$event'])
+  onMousedown(event) {
     this.mousedown.emit(event);
   }
 
@@ -68,7 +83,7 @@ export class NgxInactivityDirective {
    * Attach a key press listener
    */
   @HostListener('document:keypress', ['$event'])
-  onKeypress(event: any) {
+  onKeypress(event) {
     this.keypress.emit(event);
   }
 
@@ -78,7 +93,7 @@ export class NgxInactivityDirective {
      * by blending their values into one Observable
      */
     this.mousemove
-      .merge(this.mousedown, this.keypress)
+      .merge(this.wheelmove, this.mousedown, this.keypress)
 
       /*
        * Debounce to emits a value from the source Observable
