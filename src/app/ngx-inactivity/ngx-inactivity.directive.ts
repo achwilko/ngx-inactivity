@@ -49,6 +49,11 @@ export class NgxInactivityDirective {
   @Input() ngxInactivityInterval: number = 1000;
 
   /**
+   * List of events that will be disabled
+   */
+  @Input() disabledEvents: string[] = [];
+
+  /**
    * Inactivity callback after timeout
    */
   @Output() ngxInactivityCallback = new EventEmitter();
@@ -58,7 +63,10 @@ export class NgxInactivityDirective {
    */
   @HostListener('document:wheel', ['$event'])
   onWheelmove(event) {
-    this.wheelmove.emit(event);
+    if(!this.isEventDisabled('wheel'))
+    {
+      this.wheelmove.emit(event);
+    } 
   }
 
   /**
@@ -67,16 +75,22 @@ export class NgxInactivityDirective {
   @HostListener('document:mousemove', ['$event'])
   @HostListener('document:touchmove', ['$event'])
   onMousemove(event) {
-    this.mousemove.emit(event);
+    if(!this.isEventDisabled('mousemove') && !this.isEventDisabled('touchmove'))
+    {
+      this.mousemove.emit(event);
+    }
   }
 
   /**
-   * Atach a mouse down (and touch end) listener(s)
+   * Attach a mouse down (and touch end) listener(s)
    */
   @HostListener('document:mousedown', ['$event'])
   @HostListener('document:touchend', ['$event'])
   onMousedown(event) {
-    this.mousedown.emit(event);
+    if(!this.isEventDisabled('mousedown') && !this.isEventDisabled('touchend'))
+    {
+      this.mousedown.emit(event);
+    }
   }
 
   /**
@@ -84,7 +98,10 @@ export class NgxInactivityDirective {
    */
   @HostListener('document:keypress', ['$event'])
   onKeypress(event) {
-    this.keypress.emit(event);
+    if(!this.isEventDisabled('keypress'))
+    {
+      this.keypress.emit(event);
+    }
   }
 
   constructor() {
@@ -92,15 +109,12 @@ export class NgxInactivityDirective {
      * Merge to flattens multiple Observables together
      * by blending their values into one Observable
      */
-    this.mousemove
-      .merge(this.wheelmove, this.mousedown, this.keypress)
-
+    this.mousemove.merge(this.wheelmove, this.mousedown, this.keypress)
       /*
        * Debounce to emits a value from the source Observable
        * only after a particular time span
        */
       .throttle(() => Observable.interval(this.ngxInactivityInterval))
-
       /*
        * Subscribe to handle emitted values
        */
@@ -114,7 +128,6 @@ export class NgxInactivityDirective {
    * Start inactivity timer
    */
   public start(): void {
-
     /**
      * Inactivity callback if timeout (in minutes) is exceeded
      */
@@ -127,5 +140,14 @@ export class NgxInactivityDirective {
   public reset(): void {
     clearTimeout(this.timeoutId);
   }
+
+   /**
+   * Check if the underyling event is disabled or not
+   */
+  public isEventDisabled(eventType: string): boolean {
+    return this.disabledEvents.includes(eventType.toLowerCase());
+  }
+
+  
 
 }
