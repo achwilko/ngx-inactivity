@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
-  disabledEvents: string[] = ['mousemove'];
+  disabledEvents: string[] = ['mousemoVE'];
   constructor(){
   }
   public callback() {

@@ -63,10 +63,9 @@ export class NgxInactivityDirective {
    */
   @HostListener('document:wheel', ['$event'])
   onWheelmove(event) {
-    if(!this.isEventDisabled('wheel'))
-    {
+    if (!this.isEventDisabled('wheel')) {
       this.wheelmove.emit(event);
-    } 
+    }
   }
 
   /**
@@ -75,8 +74,7 @@ export class NgxInactivityDirective {
   @HostListener('document:mousemove', ['$event'])
   @HostListener('document:touchmove', ['$event'])
   onMousemove(event) {
-    if(!this.isEventDisabled('mousemove') && !this.isEventDisabled('touchmove'))
-    {
+    if (!this.isEventDisabled('mousemove') && !this.isEventDisabled('touchmove')) {
       this.mousemove.emit(event);
     }
   }
@@ -87,8 +85,7 @@ export class NgxInactivityDirective {
   @HostListener('document:mousedown', ['$event'])
   @HostListener('document:touchend', ['$event'])
   onMousedown(event) {
-    if(!this.isEventDisabled('mousedown') && !this.isEventDisabled('touchend'))
-    {
+    if (!this.isEventDisabled('mousedown') && !this.isEventDisabled('touchend')) {
       this.mousedown.emit(event);
     }
   }
@@ -98,8 +95,7 @@ export class NgxInactivityDirective {
    */
   @HostListener('document:keypress', ['$event'])
   onKeypress(event) {
-    if(!this.isEventDisabled('keypress'))
-    {
+    if (!this.isEventDisabled('keypress')) {
       this.keypress.emit(event);
     }
   }
@@ -141,13 +137,14 @@ export class NgxInactivityDirective {
     clearTimeout(this.timeoutId);
   }
 
-   /**
-   * Check if the underyling event is disabled or not
-   */
+  /**
+  * Check if the underyling event is disabled or not
+  */
   public isEventDisabled(eventType: string): boolean {
+    /**
+     * Convert all strings to the lower case before comparing
+     */
+    this.disabledEvents.forEach((v, i) => this.disabledEvents[i] = v.toLowerCase());
     return this.disabledEvents.includes(eventType.toLowerCase());
   }
-
-  
-
 }
