@@ -5,6 +5,10 @@ import { Component } from '@angular/core';
   templateUrl: './app.component.html'
 })
 export class AppComponent {
+
+  disabledEvents: string[] = ['mousemoVE'];
+  constructor(){
+  }
   public callback() {
     console.log('Inactivity callback..');
   }
