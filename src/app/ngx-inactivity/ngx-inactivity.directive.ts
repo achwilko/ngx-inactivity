@@ -1,9 +1,8 @@
-import { Directive, Input, Output, EventEmitter, HostListener } from '@angular/core';
 
-import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/throttle';
-import 'rxjs/add/operator/merge';
-import { Observable } from 'rxjs/Observable';
+import {interval as observableInterval,  Observable } from 'rxjs';
+
+import {throttle, merge} from 'rxjs/operators';
+import { Directive, Input, Output, EventEmitter, HostListener } from '@angular/core';
 
 /**
  * Inactivity directive
@@ -92,14 +91,14 @@ export class NgxInactivityDirective {
      * Merge to flattens multiple Observables together
      * by blending their values into one Observable
      */
-    this.mousemove
-      .merge(this.wheelmove, this.mousedown, this.keypress)
+    this.mousemove.pipe(
+      merge(this.wheelmove, this.mousedown, this.keypress),
 
       /*
        * Debounce to emits a value from the source Observable
        * only after a particular time span
        */
-      .throttle(() => Observable.interval(this.ngxInactivityInterval))
+      throttle(() => observableInterval(this.ngxInactivityInterval)),)
 
       /*
        * Subscribe to handle emitted values
